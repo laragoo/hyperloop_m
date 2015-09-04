@@ -1,3 +1,5 @@
+% p = pressure
+% t = temp
 % m/s
-function exhuastVelocity = v_exhaust(pressure, temp)
-exhaustVelocity = pressure * temp;
+function exhaustVelocity = v_exhaust(p, t)
+exhaustVelocity = p * t;
