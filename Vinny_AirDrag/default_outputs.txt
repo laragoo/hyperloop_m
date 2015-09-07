@@ -1,0 +1,4 @@
+It took 2638.00 seconds to go 352253.423784 meters.
+In Miles: 218.880674
+Wheels Were Deployd at 1932
+- - It took 62.808108 seconds to compute - - 
