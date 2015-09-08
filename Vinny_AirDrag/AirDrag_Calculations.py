@@ -1,4 +1,8 @@
 """
+UPDATED: 9/8/15
+  >>> Added in Induced Drag, changed coefficients based on paper
+  >>> This induced drag is based on numbers from a Swiss paper & NASA paper
+
 I'm doing this in python because I don't know Matlab enough (nor do I care to)
 to do it in that language. Thus Python.
 
@@ -30,11 +34,15 @@ def calculate_airdrag(output_name="airdrag_calculations.csv",
                       r_wheel=0.15,     # Radius of wheels on pod
                       v_i=300,          # initial velocity [m/s]
                       wheel_thresh=100, # Default speed at which point wheels enter in
-                      C_d=0.1,          # Drag Coefficient
+                      C_d=0.3669,       # Drag Coefficient
+                      C_l=0.0980,       # Lift Coefficient for induced drag
+                      AR=1.0,           # Aspect Ratio (nose cone divided by base)
+                      e_ff=0.59,        # Efficiency Factor
                       P_air=99,         # Density of air in pascals
                       T_air=300,        # Temperature of the air in kelvins
                       M_air=28.97,      # Molar mass of the air
-                      until_stop=False, # Calculate until the pod stops, if False then calculate the sample_length
+                      until_stop=False, # Calculate until the pod stops, if 
+                                        # false then calculate the sample_length
                       output_file=True, # Output the readouts to a csv
                       plotting=True,    # Plot the results
                       ):
@@ -61,6 +69,13 @@ def calculate_airdrag(output_name="airdrag_calculations.csv",
     a_drag is friction due to drag. Dependent on speed
         a_drag = (rho * V^2 * C_d * A_c)/(2*m_pod)
         V here will change depending on the speed of the pod at that time
+        
+    a_lift is induced friction. Dependent, again, on speed.
+        a_lift = C_l^2 / (pi * e * AR)
+        AR is length of nose cone divided by base diameter (for cones/cylinders)
+            AR = 1 for now?
+        pi is 3.14159
+        e is efficiency, 0.59 for bullets (will use to expendiency)
     
     rho is also calculated via:
         rho = P_air/(R_air * T_air)
@@ -83,6 +98,7 @@ def calculate_airdrag(output_name="airdrag_calculations.csv",
     R_air = 8.31451 / M_air       # Specific Gas Constant of Air
     rho = P_air/(R_air * T_air)   # Density of air
     g = 9.80665                   # Gravity
+    pi = 3.14159                  # Self-Explanatory
     V = v_i                       # Velocity starts at the initial velocity
     outputs = []                  # To hold output rows
     distance = 0                  # Distance
@@ -101,6 +117,8 @@ def calculate_airdrag(output_name="airdrag_calculations.csv",
             acc += (-g * u_r)/r_wheel
             if stamp==0:
                 stamp = i;
+
+        acc += (C_l**2) / (pi * e_ff * AR)   # Lift Drag
 
         row = [time_step,V,acc,distance]
         outputs.append(row);
@@ -140,5 +158,4 @@ def calculate_airdrag(output_name="airdrag_calculations.csv",
     print("Wheels Were Deployd at %d" % stamp);
     print(" - - It took %f seconds to compute - - " % (time.time() - start_time));
 
-    f.
     
